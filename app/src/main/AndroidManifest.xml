@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".utils.MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,13 +25,13 @@
             android:name=".MylistActivity"
             android:exported="false" />
         <activity
-            android:name=".SigninActivity"
+            android:name="com.example.moviehood.ui.signup.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.moviehood.ui.signin.SigninActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="com.example.moviehood.ui.activities.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,28 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
+import com.example.moviehood.ui.signin.SigninActivity;
 
-import org.w3c.dom.Text;
 public class ProfilActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     @Override
@@ -84,7 +72,7 @@ public class ProfilActivity extends AppCompatActivity {
                                 editor.apply();
 
                                 // Kembali ke halaman login
-                                Intent intent = new Intent(ProfilActivity.this, LoginActivity.class);
+                                Intent intent = new Intent(ProfilActivity.this, SigninActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
