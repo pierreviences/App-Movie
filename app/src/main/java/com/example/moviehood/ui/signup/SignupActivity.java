@@ -18,11 +18,12 @@ import com.example.moviehood.ui.signin.SigninActivity;
 import com.example.moviehood.utils.ProgressDialogHelper;
 
 public class SignupActivity extends AppCompatActivity {
-    private EditText input_nama;
-    private EditText input_email;
-    private EditText input_password;
 
-    private SignupViewModel signinViewModel;
+    private EditText inputNama;
+    private EditText inputEmail;
+    private EditText inputPassword;
+
+    private SignupViewModel signupViewModel;
 
     private ProgressDialogHelper progressDialogHelper;
 
@@ -31,43 +32,54 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        signinViewModel = new ViewModelProvider(this).get(SignupViewModel.class);
+        signupViewModel = new ViewModelProvider(this).get(SignupViewModel.class);
 
-        Button login_btn = findViewById(R.id.login_btn);
-        Button submit_btn = findViewById(R.id.submit_btn);
+        Button loginBtn = findViewById(R.id.login_btn);
+        Button submitBtn = findViewById(R.id.submit_btn);
+
         progressDialogHelper = new ProgressDialogHelper();
-        login_btn.setOnClickListener(new View.OnClickListener() {
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignupActivity.this, SigninActivity.class);
-                startActivity(intent);
+                navigateToSignin();
             }
         });
 
-        input_nama = findViewById(R.id.input_nama);
-        input_email = findViewById(R.id.input_email);
-        input_password = findViewById(R.id.password);
+        inputNama = findViewById(R.id.input_nama);
+        inputEmail = findViewById(R.id.input_email);
+        inputPassword = findViewById(R.id.password);
 
-        submit_btn.setOnClickListener(new View.OnClickListener() {
+        submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nama = input_nama.getText().toString();
-                String email = input_email.getText().toString();
-                String password = input_password.getText().toString();
-                if (TextUtils.isEmpty(nama) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-                    Toast.makeText(SignupActivity.this, "Harap isi semua input terlebih dahulu", Toast.LENGTH_SHORT).show();
-                } else {
-                    progressDialogHelper.showProgressDialog(SignupActivity.this);
-                    signinViewModel.register(nama, email, password);
-                }
+                registerUser();
             }
         });
 
         observeViewModel();
     }
 
+    private void navigateToSignin() {
+        Intent intent = new Intent(SignupActivity.this, SigninActivity.class);
+        startActivity(intent);
+    }
+
+    private void registerUser() {
+        String nama = inputNama.getText().toString().trim();
+        String email = inputEmail.getText().toString().trim();
+        String password = inputPassword.getText().toString().trim();
+
+        if (TextUtils.isEmpty(nama) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Harap isi semua input terlebih dahulu", Toast.LENGTH_SHORT).show();
+        } else {
+            progressDialogHelper.showProgressDialog(this);
+            signupViewModel.register(nama, email, password);
+        }
+    }
+
     private void observeViewModel() {
-        signinViewModel.getErrorMessage().observe(this, new Observer<String>() {
+        signupViewModel.getErrorMessage().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String errorMessage) {
                 progressDialogHelper.hideProgressDialog();
@@ -75,21 +87,20 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        signinViewModel.getIsRegisterSuccessful().observe(this, new Observer<Boolean>() {
+        signupViewModel.getIsRegisterSuccessful().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isRegisterSuccessful) {
                 progressDialogHelper.hideProgressDialog();
                 if (isRegisterSuccessful) {
-                    Toast.makeText(SignupActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignupActivity.this, SigninActivity.class);
-                    startActivity(intent);
-                    finish();
+                    onRegisterSuccess();
                 }
             }
         });
     }
 
-
-
-
+    private void onRegisterSuccess() {
+        Toast.makeText(this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
+        navigateToSignin();
+        finish();
+    }
 }
