@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="@color/ungu01"
+
+        >
+
+        <ImageView
+            android:id="@+id/button_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_back"
+            android:layout_gravity="center"
+            />
+        <LinearLayout
+            android:layout_marginLeft="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_kategori"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detail Film"
+
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                />
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:id="@+id/imagePoster"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/textJudul"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Judul Film" />
+
+    <TextView
+        android:id="@+id/textRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Rating: 0" />
+
+    <TextView
+        android:id="@+id/textDurasi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Durasi: 0" />
+
+    <TextView
+        android:id="@+id/textTahun"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Tahun: 0000" />
+
+    <TextView
+        android:id="@+id/textGenre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Genre: Unknown" />
+
+    <TextView
+        android:id="@+id/textNegara"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Negara: Unknown" />
+
+    <TextView
+        android:id="@+id/textDeskripsi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        tools:text="Deskripsi film yang panjang dan menarik." />
+
+    <Button
+        android:id="@+id/bookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Bookmark" />
+
+</LinearLayout>
