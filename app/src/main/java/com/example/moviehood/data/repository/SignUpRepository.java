@@ -22,35 +22,29 @@ public class SignUpRepository {
     public void register(String nama, String email, String password, RegisterCallback callback) {
         String url = BASE_URL + "register";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            int status = jsonResponse.getInt("status");
-                            boolean success = jsonResponse.getBoolean("success");
-                            String message = jsonResponse.getString("message");
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        int status = jsonResponse.getInt("status");
+                        boolean success = jsonResponse.getBoolean("success");
+                        String message = jsonResponse.getString("message");
 
-                            if (success) {
-                                callback.onSuccess();
-                            } else {
-                                callback.onError(message);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (success) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError(message);
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        NetworkResponse networkResponse = error.networkResponse;
-                        if (networkResponse != null && networkResponse.data != null) {
-                            String errorMessage = new String(networkResponse.data);
-                            callback.onError(errorMessage);
-                        } else {
-                            callback.onError(error.getMessage());
-                        }
+                error -> {
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null && networkResponse.data != null) {
+                        String errorMessage = new String(networkResponse.data);
+                        callback.onError(errorMessage);
+                    } else {
+                        callback.onError(error.getMessage());
                     }
                 }
         ) {
