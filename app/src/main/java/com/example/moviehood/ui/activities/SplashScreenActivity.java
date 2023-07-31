@@ -1,4 +1,5 @@
 package com.example.moviehood.ui.activities;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -15,12 +16,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        TimerHelper.startTimer(3000, new TimerHelper.TimerListener() {
-            @Override
-            public void onTimerFinished() {
-                navigateToLoginActivity();
-            }
-        });
+        TimerHelper.startTimer(3000, this::navigateToLoginActivity);
     }
 
     private void navigateToLoginActivity() {
