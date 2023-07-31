@@ -1,0 +1,204 @@
+package com.example.moviehood;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MylistActivity extends AppCompatActivity {
+    private List<ModelFilm> listFilm;
+    private RecyclerView recyclerView;
+    private AdapterFilm adapter;
+
+    private SharedPreferences sharedPreferences;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mylist);
+
+
+
+        ImageView kehome = findViewById(R.id.kehome);
+        ImageView keprofil = findViewById(R.id.keprofil);
+
+        kehome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MylistActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        keprofil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MylistActivity.this, ProfilActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listFilm = new ArrayList<ModelFilm>();
+        recyclerView = findViewById(R.id.recyclerView);
+        adapter = new AdapterFilm(listFilm);
+
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+
+        getData();
+
+    }
+
+    private void getData() {
+        sharedPreferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
+        String keyword = sharedPreferences.getString("id_user", null);
+        String endpoint = "https://us-east-1.aws.data.mongodb-api.com/app/projekmovie-szhmv/endpoint/suka";
+        Uri.Builder builder = Uri.parse(endpoint).buildUpon();
+        builder.appendQueryParameter("id_user", keyword);
+        String url = builder.build().toString();
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            int status = response.getInt("status");
+                            boolean success = response.getBoolean("success");
+                            String message = response.getString("message");
+                            if (success) {
+                                JSONArray data = response.getJSONArray("data");
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject obj = data.getJSONObject(i);
+                                    ModelFilm modelKamar = new ModelFilm();
+                                    modelKamar.setId(obj.getString("id_film"));
+                                    modelKamar.setJudul(obj.getString("judul"));
+                                    modelKamar.setRating(obj.getInt("rating"));
+                                    modelKamar.setTahun(obj.getInt("tahun"));
+                                    modelKamar.setGenre(obj.getString("genre"));
+                                    modelKamar.setNegara(obj.getString("negara"));
+                                    modelKamar.setDeskripsi(obj.getString("deskripsi"));
+                                    modelKamar.setGambar(obj.getString("gambar"));
+                                    listFilm.add(modelKamar);
+                                }
+                            } else {
+                                TextView tidakada = findViewById(R.id.tidakada);
+                                tidakada.setVisibility(View.VISIBLE);
+
+                            }
+                            progressBar.setVisibility(View.GONE);
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Gagal memuat data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(request);
+    }
+
+    public class AdapterFilm extends RecyclerView.Adapter<AdapterFilm.ViewHolder> {
+
+        private List<ModelFilm> listFilm;
+
+        public AdapterFilm(List<ModelFilm> listFilm) {
+            this.listFilm = listFilm;
+        }
+
+        @NonNull
+        @Override
+        public AdapterFilm.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_favorit, parent, false);
+            AdapterFilm.ViewHolder viewHolder = new AdapterFilm.ViewHolder(view);
+            viewHolder.itemView.setOnClickListener(viewHolder);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull AdapterFilm.ViewHolder holder, int position) {
+            ModelFilm modelKamar = listFilm.get(position);
+            holder.judul.setText(modelKamar.getJudul());
+            holder.tahun.setText(String.valueOf(modelKamar.getTahun()));
+            Picasso.get().load(modelKamar.getGambar()).fit().centerCrop().into(holder.gambar);
+
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return (listFilm != null) ? listFilm.size() : 0;
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
+            private TextView judul, tahun;
+            private ImageView gambar;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                judul = itemView.findViewById(R.id.judul);
+                tahun = itemView.findViewById(R.id.tahun);
+                gambar = itemView.findViewById(R.id.gambar);
+                itemView.setFocusable(true);
+            }
+
+            @Override
+            public void onClick(View view) {
+                int position = getAdapterPosition();
+                ModelFilm modelFilm = listFilm.get(position);
+                String id_film = String.valueOf(modelFilm.getId());
+                Intent intent = new Intent(view.getContext(), DetailFilmActivity.class);
+                intent.putExtra("id_film", id_film);
+                view.getContext().startActivity(intent);
+            }
+        }
+
+
+
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+
+
+}
